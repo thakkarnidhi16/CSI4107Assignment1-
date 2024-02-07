@@ -1,6 +1,10 @@
 import os
+import nltk
+nltk.download('punkt')
+nltk.download('stopwords')
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
+from nltk.corpus import words
 from nltk.stem import PorterStemmer
 
 def load_documents(folder_path):
@@ -25,17 +29,17 @@ def preprocess(document):
     
     # Step 2: Stopword removal
     stop_words = set(stopwords.words('english'))
-    tokens = [token for token in tokens if token.isalnum() and token not in stop_words]
+    tokens = [token for token in tokens if token.isalpha() and token not in stop_words]
     
     #Step 3: Porter stemming
-    porter = PorterStemmer()
-    tokens = [porter.stem(token) for token in tokens]
+    #porter = PorterStemmer()
+    #tokens = [porter.stem(token) for token in tokens]
     
     return tokens
 
 def main():
     
-    folder_path = "/Users/yara/Desktop/Winter 2024/CSI4107/A1_Group12/coll"
+    folder_path = "/Users/Rajvir/OneDrive/Documents/y4s1/csi4107/CSI4107Assignment1-/coll"
     
     documents = load_documents(folder_path)
     
@@ -51,6 +55,7 @@ def main():
    # print(f"Document {doc_id + 1} - Original Text: {document[:50]}...")
     print(f"Document {doc_id + 1} - Processed Tokens: {processed_tokens}")
     print("=" * 50)
+    print(len(processed_tokens))
 
 if __name__ == "__main__":
     main()
