@@ -126,7 +126,7 @@ def preprocess(document,min_token_length=3):
 
 def main():
     # Specify the path to your folder containing files
-    folder_path = "C:/Users/thakk/Desktop/uottawa/Winter2024/CSI4107/Assignment1/AP_collection/coll"
+    folder_path = "/Users/yara/Desktop/Fall 2024/CSI4107/A1/CSI4107Assignment1-/AP_collection/coll"
     
 
     # Call the load_documents function
