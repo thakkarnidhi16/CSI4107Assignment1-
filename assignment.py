@@ -126,8 +126,13 @@ def preprocess(document, min_token_length=3, min_occurrences=3):
     return tokens
 
 def main():
+<<<<<<< HEAD
     
     folder_path = "C:/Users/thakk/Desktop/uottawa/Winter2024/CSI4107/Assignment1/AP_collection/coll"
+=======
+    # Specify the path to your folder containing files
+    folder_path = "/Users/yara/Desktop/Fall 2024/CSI4107/A1/CSI4107Assignment1-/AP_collection/coll"
+>>>>>>> fd6d91ecc7e915d48ddd9f3313e4f4372eeb4585
     
 
     # Call the load_documents function
