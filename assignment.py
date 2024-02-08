@@ -1,9 +1,10 @@
 import os
-
 from nltk.tokenize import word_tokenize
-from nltk.corpus import stopwords
+from nltk.corpus import stopwords, wordnet
 from nltk.stem import PorterStemmer
 from nltk.stem import LancasterStemmer
+from nltk.stem import WordNetLemmatizer
+from collections import Counter
 
 
 def load_documents(folder_path):
@@ -88,44 +89,44 @@ custom_stopwords = [
 ]
 
 
-def preprocess(document,min_token_length=3):
+def is_valid_word(word):
+    # Check if the word is a valid English word using WordNet
+    synsets = wordnet.synsets(word)
+    return len(synsets) > 0
 
-    # Step 1: Tokenization
-    tokens = word_tokenize(document.lower())  # Convert to lowercase for consistency
+def preprocess(document, min_token_length=3, min_occurrences=3):
+    # Tokenization
+    tokens = word_tokenize(document.lower())
     
-    # Step 2: Stopword removal
+    # Stopword removal
     stop_words = set(stopwords.words('english') + custom_stopwords)
+    tokens = [token for token in tokens if token.isalnum() and token not in stop_words]
     
-   
-    tokens = [token for token in tokens if token.isalnum() and not token.isdigit() and token not in stop_words]
-    
-  
-   # Step 3: Lancaster stemming
+    # Lancaster stemming
     lancaster = LancasterStemmer()
     tokens = [lancaster.stem(token) for token in tokens]
     
+    # Count occurrences of each word using a dictionary
+    word_counts = {}
+    for token in tokens:
+        if token in word_counts:
+            word_counts[token] += 1
+        else:
+            word_counts[token] = 1
     
+    # Eliminate words that appear only once or twice
+    tokens = [token for token in tokens if word_counts[token] > min_occurrences]
     
-    tokens = [token for token in tokens if token not in stop_words]
+    # Filter by minimum token length and remove non-words
+    tokens = [token for token in tokens if len(token) >= min_token_length and is_valid_word(token)]
     
-    tokens = [token for token in tokens if len(token) >= min_token_length]
-    tokens = [token for token in tokens if not any(char.isdigit() for char in token)]
-    
+    # Remove duplicates
     tokens = list(set(tokens))
-    
-
-
-    #tokens = [token for token in tokens if token.isalnum() and token not in stop_words]
-    
-    # Optional Step 3: Porter stemming
-    #porter = PorterStemmer()
-    #tokens = [porter.stem(token) for token in tokens]
     
     return tokens
 
-
 def main():
-    # Specify the path to your folder containing files
+    
     folder_path = "C:/Users/thakk/Desktop/uottawa/Winter2024/CSI4107/Assignment1/AP_collection/coll"
     
 
@@ -144,7 +145,7 @@ def main():
         # Display the results
         print(f"Document {doc_id + 1} - Token Count: {len(processed_tokens)}")
         print(f"Document {doc_id + 1} - Original Text: {document[:50]}...")
-    #print(f"Document {doc_id + 1} - Processed Tokens: {processed_tokens}")
+        #print(f"Document {doc_id + 1} - Processed Tokens: {processed_tokens}")
         print("=" * 50)
         
     print(f"Total Token Count Across All Documents: {total_token_count}")
