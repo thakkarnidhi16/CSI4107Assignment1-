@@ -125,6 +125,21 @@ def preprocess(document, min_token_length=3, min_occurrences=3):
     
     return tokens
 
+
+#step2 indexing 
+def build_inverted_index(documents):
+    inverted_index = {}
+
+    for doc_id, document in enumerate(documents):
+        processed_tokens = preprocess(document)
+
+        for token in processed_tokens:
+            if token not in inverted_index:
+                inverted_index[token] = []
+            inverted_index[token].append(doc_id)
+
+    return inverted_index
+
 def main():
 
     
