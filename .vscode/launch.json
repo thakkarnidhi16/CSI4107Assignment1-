@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {
   "version": "0.2.0",
   "configurations": [
@@ -10,4 +11,21 @@
       "program": "build/Debug/outDebug"
     }
   ]
+=======
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug",
+            "program": "${workspaceFolder}/<executable file>",
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        }
+    ]
+>>>>>>> 74d3363b1d65c120720c0b2e78a1028bdc856c3c
 }
