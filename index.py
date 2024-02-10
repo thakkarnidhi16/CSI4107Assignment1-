@@ -54,6 +54,7 @@ def preprocess(document, min_token_length=3, min_occurrences=3):
     return tokens
 
 
+
 def build_inverted_index(documents):
     inverted_index = defaultdict(list)
 
@@ -67,7 +68,7 @@ def build_inverted_index(documents):
 
 
 def main():
-    folder_path = "/Users/yara/Desktop/Winter 2024/CSI4107/A1_Group12/AP_collection/coll"
+    folder_path = "/Users/Rajvir/OneDrive/documents/y4s1/csi4107/csi4107assignment1-/AP_collection/coll"
 
     # Call the load_documents function
     documents = load_documents(folder_path)

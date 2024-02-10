@@ -10,6 +10,10 @@ from collections import defaultdict
 
 def load_documents(folder_path):
     # Initialize an empty list to store the documents
+    savedocname = False
+    savedoctokens = False
+    documents_tokens = []
+    documents_names = []
     documents = []
 
     # Iterate over all files in the specified folder
@@ -20,6 +24,16 @@ def load_documents(folder_path):
             # Read the content of each file
             with open(file_path, 'r', encoding='utf-8', errors='ignore') as file:
                 document = file.read()
+
+                # Get the name of each document
+                tokens = word_tokenize(document)
+                for token in tokens:
+                    if token == '<DOCNO>' and savedocname == False:
+                        savedocname = True
+                    elif savedocname == True:
+                        documents_names.append(token)
+                        savedocname = False
+                    
                 documents.append(document)
 
     return documents
@@ -95,10 +109,11 @@ def is_valid_word(word):
     synsets = wordnet.synsets(word)
     return len(synsets) > 0
 
+
 def preprocess(document, min_token_length=3, min_occurrences=3):
     # Tokenization
     tokens = word_tokenize(document.lower())
-    
+
     # Stopword removal
     stop_words = set(stopwords.words('english') + custom_stopwords)
     tokens = [token for token in tokens if token.isalnum() and token not in stop_words]
@@ -133,13 +148,9 @@ def build_inverted_index(documents):
 
     for doc_id, document in enumerate(documents):
         processed_tokens = preprocess(document)
-        term_frequency = dict()
 
         for token in processed_tokens:
-            term_frequency[token] = term_frequency.get(token, 0) + 1
-
-        for term, frequency in term_frequency.items():
-            inverted_index[term].append((doc_id, frequency))
+            inverted_index[token].append(doc_id)
 
     return inverted_index
 
@@ -162,7 +173,7 @@ def main():
         processed_tokens = preprocess(document)
         total_token_count += len(processed_tokens) """
 
-    #print(f"Total Token Count Across All Documents: {total_token_count}")
+    print(f"Total Token Count Across All Documents: {total_token_count}")
 
 
 if __name__ == "__main__":
