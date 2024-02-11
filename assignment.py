@@ -1,4 +1,5 @@
 import os
+import math
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords, wordnet
 from nltk.stem import PorterStemmer
@@ -7,6 +8,17 @@ from nltk.stem import WordNetLemmatizer
 from collections import Counter
 from collections import defaultdict
 
+def load_query():
+    # Read the content of the file
+    with open('query.txt', 'r') as file:
+        content = file.read()
+
+    # Split the content into lines
+    lines = content.split('\n')
+
+    # Extract titles from lines containing "<title>"
+    titles = [line.strip()[7:] for line in lines if line.strip().startswith("<title>")]
+    return titles
 
 def load_documents(folder_path):
     # Initialize an empty list to store the documents
@@ -126,6 +138,46 @@ def preprocess(document, min_token_length=3, min_occurrences=3):
     
     return tokens
 
+def compute_cosine_similarity(query_vector, document_vector):
+    print("Query Vector in compute_cosine_similarity:", query_vector)
+    print("Document Vector in compute_cosine_similarity:", document_vector)
+
+    dot_product = sum(query_vector.get(term, 0) * document_vector.get(term, 0) for term in set(query_vector) & set(document_vector))
+    query_norm = math.sqrt(sum(val ** 2 for val in query_vector.values()))
+    doc_norm = math.sqrt(sum(val ** 2 for val in document_vector.values()))
+
+    if query_norm == 0 or doc_norm == 0:
+        return 0  # To avoid division by zero
+    print("Dot Product:", dot_product)
+    print("Query Norm:", query_norm)
+    print("Doc Norm:", doc_norm)
+    return dot_product / (query_norm * doc_norm)
+
+def search(query, inverted_index, documents):
+    query_terms = word_tokenize(query)
+    query_vector = {term: query_terms.count(term) for term in set(query_terms)}
+
+    scores = []
+    for term, query_term_frequency in query_vector.items():
+        if term in inverted_index:
+            postings_list = inverted_index[term]
+            for doc_id, document in enumerate(documents):  # Enumerate over documents to get doc_id
+                document_vector = {term: freq for term, freq in ((term, freq) for term, freq in inverted_index.get(term, []) or [(term, 0)]) for term in query_vector}
+                similarity = compute_cosine_similarity(query_vector, document_vector)
+                scores.append((doc_id, similarity))
+
+    # Combine scores for the same document and sort the results based on similarity score
+    scores_dict = defaultdict(float)
+    for doc_id, similarity in scores:
+        scores_dict[doc_id] += similarity
+
+    sorted_scores = sorted(scores_dict.items(), key=lambda x: x[1], reverse=True)
+
+    return sorted_scores
+
+
+
+
 
 #step2 indexing 
 def build_inverted_index(documents):
@@ -153,9 +205,16 @@ def main():
     # Build inverted index
     inverted_index = build_inverted_index(documents)
 
-    # Display the results
-    for word, postings in inverted_index.items():
-        print(f"Word: {word}, Postings: {postings}")
+    # # Display the results
+    # for word, postings in inverted_index.items():
+    #     print(f"Word: {word}, Postings: {postings}")
+
+    queries = load_query()
+    results = search("sleepless crossword saddest christmases horst marengo redeploy", inverted_index, documents)
+    print("Query:")
+    print("Search Results:")
+    for doc_id, similarity in results:
+        print(f"Document {doc_id + 1}: Similarity = {similarity:.4f}")
 
     # Calculate total token count
     """ for doc_id, document in enumerate(documents):
