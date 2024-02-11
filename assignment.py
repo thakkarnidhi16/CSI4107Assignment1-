@@ -139,8 +139,6 @@ def preprocess(document, min_token_length=3, min_occurrences=3):
     return tokens
 
 def compute_cosine_similarity(query_vector, document_vector):
-    print("Query Vector in compute_cosine_similarity:", query_vector)
-    print("Document Vector in compute_cosine_similarity:", document_vector)
 
     dot_product = sum(query_vector.get(term, 0) * document_vector.get(term, 0) for term in set(query_vector) & set(document_vector))
     query_norm = math.sqrt(sum(val ** 2 for val in query_vector.values()))
@@ -148,9 +146,6 @@ def compute_cosine_similarity(query_vector, document_vector):
 
     if query_norm == 0 or doc_norm == 0:
         return 0  # To avoid division by zero
-    print("Dot Product:", dot_product)
-    print("Query Norm:", query_norm)
-    print("Doc Norm:", doc_norm)
     return dot_product / (query_norm * doc_norm)
 
 def search(query, inverted_index, documents):
@@ -162,7 +157,8 @@ def search(query, inverted_index, documents):
         if term in inverted_index:
             postings_list = inverted_index[term]
             for doc_id, document in enumerate(documents):  # Enumerate over documents to get doc_id
-                document_vector = {term: freq for term, freq in ((term, freq) for term, freq in inverted_index.get(term, []) or [(term, 0)]) for term in query_vector}
+                document_terms = word_tokenize(document)
+                document_vector = {term: inverted_index.get(term, [(doc_id, 0)])[0][1] for term in set(document_terms)}
                 similarity = compute_cosine_similarity(query_vector, document_vector)
                 scores.append((doc_id, similarity))
 
@@ -211,7 +207,6 @@ def main():
 
     queries = load_query()
     results = search("sleepless crossword saddest christmases horst marengo redeploy", inverted_index, documents)
-    print("Query:")
     print("Search Results:")
     for doc_id, similarity in results:
         print(f"Document {doc_id + 1}: Similarity = {similarity:.4f}")
