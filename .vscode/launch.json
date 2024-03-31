@@ -1,4 +1,20 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "C/C++ Runner: Debug Session",
+      "type": "lldb",
+      "request": "launch",
+      "args": [],
+      "cwd": ".",
+      "program": "build/Debug/outDebug"
+    }
+  ]
+=======
+>>>>>>> 99c79d1e8a60050fc072fb6be084fde52f4c934e
 {
     // Use IntelliSense to learn about possible attributes.
     // Hover to view descriptions of existing attributes.
@@ -14,6 +30,7 @@
             "cwd": "${workspaceFolder}"
         }
     ]
+<<<<<<< HEAD
 =======
 {
   "version": "0.2.0",
@@ -28,4 +45,7 @@
     }
   ]
 >>>>>>> origin/main
+=======
+>>>>>>> 74d3363b1d65c120720c0b2e78a1028bdc856c3c
+>>>>>>> 99c79d1e8a60050fc072fb6be084fde52f4c934e
 }
